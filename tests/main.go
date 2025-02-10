@@ -1,5 +1,7 @@
 package main
 
+//require "github.com/tspenchev000/gocdue/cdue"
+
 import (
 	"fmt"
 )

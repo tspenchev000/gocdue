@@ -12,7 +12,7 @@ import (
 )
 
 // Encrypts plaintext using AES-GCM
-func encrypt(plaintext string, key []byte) (string, string, error) {
+func Encrypt(plaintext string, key []byte) (string, string, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return "", "", err
@@ -33,7 +33,7 @@ func encrypt(plaintext string, key []byte) (string, string, error) {
 }
 
 // Decrypts AES-GCM encrypted ciphertext
-func decrypt(nonceHex, cipherHex string, key []byte) (string, error) {
+func Decrypt(nonceHex, cipherHex string, key []byte) (string, error) {
 	nonce, err := hex.DecodeString(nonceHex)
 	if err != nil {
 		return "", err
@@ -63,15 +63,15 @@ func decrypt(nonceHex, cipherHex string, key []byte) (string, error) {
 }
 
 // Generates a token to update ciphertext without full decryption
-func generateUpdateToken(oldKey, newKey []byte) []byte {
+func GenerateUpdateToken(oldKey, newKey []byte) []byte {
 	h := hmac.New(sha256.New, oldKey)
 	h.Write(newKey)
 	return h.Sum(nil) // Token = HMAC(oldKey, newKey)
 }
 
 // Updates ciphertext using the update token
-func updateCiphertext(oldKey, newKey []byte, nonceHex, cipherHex string) (string, string, error) {
-	token := generateUpdateToken(oldKey, newKey)
+func UpdateCiphertext(oldKey, newKey []byte, nonceHex, cipherHex string) (string, string, error) {
+	token := GenerateUpdateToken(oldKey, newKey)
 	block, err := aes.NewCipher(token) // Use token to create a pseudo-key
 	if err != nil {
 		return "", "", err
@@ -97,7 +97,7 @@ func updateCiphertext(oldKey, newKey []byte, nonceHex, cipherHex string) (string
 }
 
 // Generates a random AES key
-func generateKey() ([]byte, error) {
+func GenerateKey() ([]byte, error) {
 	key := make([]byte, 32) // AES-256 key size
 	_, err := rand.Read(key)
 	return key, err
